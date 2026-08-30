@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Bell,
   CalendarDays,
@@ -25,7 +24,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
+import { SignedIn } from "./auth/signed-in";
+import { SignedOut } from "./auth/signed-out";
 
 const marketingLinks = [
   { href: "/how-it-works", label: "How it works" },
@@ -87,12 +89,20 @@ function NavLink({
 function UserMenu({
   side = "bottom",
   align = "end",
-  onSignOut,
 }: {
   side?: "bottom" | "top";
   align?: "start" | "end" | "center";
-  onSignOut: () => void;
 }) {
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => router.push("/"),
+      },
+    });
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -111,7 +121,7 @@ function UserMenu({
           </DropdownMenuItem>
         ))}
         <DropdownMenuSeparator />
-        <DropdownMenuItem variant="destructive" onClick={onSignOut}>
+        <DropdownMenuItem variant="destructive" onClick={handleSignOut}>
           <LogOut />
           Sign out
         </DropdownMenuItem>
@@ -131,19 +141,13 @@ function MobileCheckIn() {
   );
 }
 
-function MobileNav({
-  pathname,
-  onSignOut,
-}: {
-  pathname: string;
-  onSignOut: () => void;
-}) {
+function MobileNav({ pathname }: { pathname: string }) {
   return (
     <nav
       aria-label="Primary"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-background/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-md md:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 px-4 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] md:hidden"
     >
-      <div className="mx-auto grid max-w-lg grid-cols-5 items-center gap-1 px-3 py-2">
+      <div className="mx-auto grid max-w-md grid-cols-5 items-end gap-1 rounded-4xl border border-border bg-background/90 p-2 pt-3 shadow-lg shadow-primary/10 backdrop-blur-md">
         {appLinks.slice(0, 3).map((item) => {
           const active = pathname === item.href;
           return (
@@ -152,8 +156,8 @@ function MobileNav({
               href={item.href}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "flex flex-col items-center gap-0.5 rounded-2xl px-2 py-1.5 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring",
-                active && "text-primary",
+                "flex flex-col items-center gap-1 rounded-2xl py-1.5 text-[11px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring",
+                active && "bg-muted text-primary",
               )}
             >
               <item.icon className="size-5" />
@@ -161,94 +165,101 @@ function MobileNav({
             </Link>
           );
         })}
-        <div className="flex justify-center">
+        <div className="flex -translate-y-2 justify-center">
           <MobileCheckIn />
         </div>
         <div className="flex justify-center">
-          <UserMenu side="top" align="center" onSignOut={onSignOut} />
+          <UserMenu side="top" align="center" />
         </div>
       </div>
     </nav>
   );
 }
 
-// ponytail: dev-only auth mock. Remove when real auth lands and drive
-// `signedIn` from the session instead.
-function Navbar({ signedIn = false }: { signedIn?: boolean }) {
+function Navbar() {
   const pathname = usePathname();
-  const [isSignedIn, setIsSignedIn] = useState(signedIn);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/70 bg-background/80 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setIsSignedIn((v) => !v)}
-          className="rounded-full text-muted-foreground"
-          aria-pressed={isSignedIn}
-          aria-label="Toggle signed-in preview"
-        >
-          {isSignedIn ? "Signed in" : "Signed out"}
-        </Button>
+    <>
+      <header className="sticky top-0 z-50 border-b border-border/70 bg-background/80 backdrop-blur-md">
+        <div className="relative mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
+        <div className="hidden md:flex">
+          <SignedOut>
+            <Logo href="/" />
+          </SignedOut>
+          <SignedIn>
+            <Logo href="/today" />
+          </SignedIn>
+        </div>
+        <div className="md:hidden">
+          <SignedOut>
+            <Logo href="/" />
+          </SignedOut>
+        </div>
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:hidden">
+          <SignedIn>
+            <Logo href="/today" />
+          </SignedIn>
+        </div>
 
         <div className="flex flex-1 items-center gap-8">
-          <Logo href={isSignedIn ? "/today" : "/"} />
           <nav aria-label="Main" className="hidden items-center gap-1 md:flex">
-            {isSignedIn
-              ? appLinks.map((link) => (
-                  <NavLink
-                    key={link.href}
-                    href={link.href}
-                    label={link.label}
-                    active={pathname === link.href}
-                  />
-                ))
-              : marketingLinks.map((link) => (
-                  <NavLink
-                    key={link.href}
-                    href={link.href}
-                    label={link.label}
-                    active={pathname === link.href}
-                  />
-                ))}
+            <SignedIn>
+              {appLinks.map((link) => (
+                <NavLink
+                  key={link.href}
+                  href={link.href}
+                  label={link.label}
+                  active={pathname === link.href}
+                />
+              ))}
+            </SignedIn>
+            <SignedOut>
+              {marketingLinks.map((link) => (
+                <NavLink
+                  key={link.href}
+                  href={link.href}
+                  label={link.label}
+                  active={pathname === link.href}
+                />
+              ))}
+            </SignedOut>
           </nav>
         </div>
 
         <div className="flex items-center gap-2">
-          {isSignedIn ? (
-            <>
-              <Button className="hidden md:inline-flex">
-                <Plus />
-                Check in
-              </Button>
-              <div className="hidden md:block">
-                <UserMenu onSignOut={() => setIsSignedIn(false)} />
-              </div>
-            </>
-          ) : (
-            <>
-              <Link
-                href="/sign-in"
-                className={cn(buttonVariants({ variant: "ghost" }))}
-              >
-                Sign in
-              </Link>
-              <Link
-                href="/sign-up"
-                className={cn(buttonVariants())}
-              >
-                Start free
-              </Link>
-            </>
-          )}
-        </div>
-      </div>
+          <SignedIn>
+            <Button className="hidden md:inline-flex">
+              <Plus />
+              Check in
+            </Button>
+            <div className="hidden md:block">
+              <UserMenu />
+            </div>
+          </SignedIn>
 
-      {isSignedIn && (
-        <MobileNav pathname={pathname} onSignOut={() => setIsSignedIn(false)} />
-      )}
-    </header>
+          <SignedOut>
+            <Link
+              href="/sign-in"
+              className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+            >
+              Sign in
+            </Link>
+            <Link
+              href="/sign-up"
+              className={cn(buttonVariants({ size: "sm" }))}
+            >
+              Start free
+            </Link>
+          </SignedOut>
+        </div>
+        </div>
+      </header>
+
+      <SignedIn>
+        <MobileNav pathname={pathname} />
+      </SignedIn>
+    </>
   );
 }
 
