@@ -18,6 +18,10 @@ model User {
   email         String
   emailVerified Boolean   @default(false)
   image         String?
+  isOnboarded   Boolean    @default(false)
+  focusAreas    String[]   @default([])
+  reminderEnabled  Boolean  @default(false)
+  reminderTime  String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
@@ -26,6 +30,7 @@ model User {
   @@unique([email])
   @@map("user")
 }
+
 
 model Session {
   id        String   @id
@@ -75,3 +80,4 @@ model Verification {
   @@index([identifier])
   @@map("verification")
 }
+

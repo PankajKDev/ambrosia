@@ -10,6 +10,18 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  user: {
+    additionalFields: {
+      isOnboarded: {
+        type: "boolean",
+        defaultValue: false,
+        required: false,
+      },
+      focusAreas: { type: "string[]", defaultValue: [] },
+      reminderEnabled: { type: "boolean", defaultValue: false },
+      reminderTime: { type: "string", required: false },
+    },
+  },
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID!,
