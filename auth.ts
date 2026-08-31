@@ -20,6 +20,8 @@ export const auth = betterAuth({
       focusAreas: { type: "string[]", defaultValue: [] },
       reminderEnabled: { type: "boolean", defaultValue: false },
       reminderTime: { type: "string", required: false },
+      aiEnabled: { type: "boolean", defaultValue: false },
+      aiModel: { type: "string", defaultValue: "gemini" },
     },
   },
   socialProviders: {

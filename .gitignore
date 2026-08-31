@@ -24,6 +24,7 @@
 .DS_Store
 *.pem
 GUIDE.md
+changelog.md
 
 # debug
 npm-debug.log*

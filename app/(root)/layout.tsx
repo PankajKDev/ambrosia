@@ -4,7 +4,9 @@ function layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen w-full">
       <Navbar />
-      <div className="flex flex-col min-h-screen w-full">{children}</div>
+      <div className="flex flex-col min-h-screen w-full pb-24 md:pb-0">
+        {children}
+      </div>
     </div>
   );
 }

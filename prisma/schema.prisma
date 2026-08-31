@@ -22,10 +22,13 @@ model User {
   focusAreas    String[]   @default([])
   reminderEnabled  Boolean  @default(false)
   reminderTime  String?
+  aiEnabled   Boolean  @default(false)
+  aiModel     String   @default("gemini")
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
+  notes         Note[]
 
   @@unique([email])
   @@map("user")
@@ -81,3 +84,22 @@ model Verification {
   @@map("verification")
 }
 
+enum Mood{
+  LOW
+  MEH
+  OKAY
+  GOOD
+  GREAT
+}
+
+model Note{
+  id String @id @default(cuid())
+  userId String
+  user User @relation(fields: [userId],references: [id],onDelete: Cascade)
+  mood Mood?
+  content String
+  tags String[] @default([])
+  date DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  @@index([userId,date])
+}
