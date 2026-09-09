@@ -16,6 +16,7 @@ import {
 
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
@@ -57,8 +58,9 @@ function Onboarding() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  if (isPending) return null;
-  if (isOnboarded) return null;
+  const showOverlay = !isPending && !!session && !isOnboarded;
+
+  if (!showOverlay) return null;
 
   const toggle = (value: string) => {
     setSelected((prev) => {
@@ -96,20 +98,18 @@ function Onboarding() {
   };
 
   return (
-    <main className="relative flex min-h-[80svh] items-center justify-center overflow-hidden px-4 py-16">
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 top-0 -z-10 h-105 bg-radial-[at_50%_0%] from-(--hero-aura) via-(--hero-wash) to-transparent"
-      />
-
-      <div className="w-full max-w-md">
-        <div className="mb-8 flex flex-col items-center text-center">
-          <span className="grid size-12 place-items-center rounded-2xl bg-primary text-primary-foreground">
-            <Sparkles className="size-5" />
-          </span>
-        </div>
-
+    <Dialog open onOpenChange={() => {}}>
+      <DialogContent
+        showCloseButton={false}
+        className="max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto border-0 bg-transparent p-0 shadow-none"
+      >
         <div className="rounded-4xl border border-border bg-background/85 p-7 shadow-lg shadow-primary/5 backdrop-blur-sm sm:p-8">
+          <div className="mb-8 flex flex-col items-center text-center">
+            <span className="grid size-12 place-items-center rounded-2xl bg-primary text-primary-foreground">
+              <Sparkles className="size-5" />
+            </span>
+          </div>
+
           <Progress step={step} />
 
           {step === 1 ? (
@@ -296,8 +296,8 @@ function Onboarding() {
             </form>
           )}
         </div>
-      </div>
-    </main>
+      </DialogContent>
+    </Dialog>
   );
 }
 

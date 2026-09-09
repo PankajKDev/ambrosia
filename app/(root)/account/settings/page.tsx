@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
+  Bell,
   Check,
   FlaskConical,
   Laptop,
@@ -15,13 +16,8 @@ import {
 
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { useTheme } from "@teispace/next-themes";
 import { cn } from "@/lib/utils";
 
 const themeOptions = [
@@ -30,23 +26,10 @@ const themeOptions = [
   { value: "system", label: "System", icon: Laptop },
 ];
 
-const modelOptions = [
-  { value: "gemini", label: "Gemini" },
-  { value: "chatgpt", label: "ChatGPT" },
-  { value: "deepseek", label: "DeepSeek" },
-  { value: "claude", label: "Claude" },
-];
-
-const LABELS: Record<string, string> = {
-  gemini: "Gemini",
-  chatgpt: "ChatGPT",
-  deepseek: "DeepSeek",
-  claude: "Claude",
-};
-
-type AiUser = {
+type SettingsUser = {
   aiEnabled?: boolean;
-  aiModel?: string;
+  reminderEnabled?: boolean;
+  reminderTime?: string;
 };
 
 function SectionCard({
@@ -93,18 +76,21 @@ function SectionCard({
 function Switch({
   checked,
   onChange,
+  disabled,
 }: {
   checked: boolean;
   onChange: (checked: boolean) => void;
+  disabled?: boolean;
 }) {
   return (
     <button
       type="button"
       role="switch"
       aria-checked={checked}
+      disabled={disabled}
       onClick={() => onChange(!checked)}
       className={cn(
-        "relative inline-flex h-7 w-12 shrink-0 items-center rounded-full border transition-colors focus-visible:outline-2 focus-visible:outline-ring",
+        "relative inline-flex h-7 w-12 shrink-0 items-center rounded-full border transition-colors focus-visible:outline-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50",
         checked
           ? "border-(--mood-gold)/50 bg-(--mood-gold)"
           : "border-border bg-muted",
@@ -123,16 +109,22 @@ function Switch({
 export default function SettingsPage() {
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
-  const user = session?.user as unknown as AiUser | null;
+  const user = session?.user as unknown as SettingsUser | null;
+  const { theme, setTheme } = useTheme();
 
-  const [theme, setTheme] = useState<string>(() => {
-    if (typeof window === "undefined") return "system";
-    return localStorage.getItem("theme") || "system";
-  });
   const [aiEnabled, setAiEnabled] = useState(Boolean(user?.aiEnabled));
-  const [aiModel, setAiModel] = useState(user?.aiModel || "gemini");
   const [isSaving, setIsSaving] = useState(false);
-  const [saveState, setSaveState] = useState<"idle" | "saved" | "error">("idle");
+  const [saveState, setSaveState] = useState<"idle" | "saved" | "error">(
+    "idle",
+  );
+  const [reminderEnabled, setReminderEnabled] = useState(
+    Boolean(user?.reminderEnabled),
+  );
+  const [reminderTime, setReminderTime] = useState(user?.reminderTime || "");
+  const [isSavingReminder, setIsSavingReminder] = useState(false);
+  const [reminderState, setReminderState] = useState<
+    "idle" | "saved" | "error"
+  >("idle");
 
   if (isPending) return null;
   if (!user) {
@@ -140,30 +132,20 @@ export default function SettingsPage() {
     return null;
   }
 
-  const applyTheme = (value: string) => {
-    localStorage.setItem("theme", value);
-    setTheme(value);
-    const root = document.documentElement;
-    const isDark =
-      value === "dark" ||
-      (value === "system" &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches);
-    root.classList.toggle("dark", isDark);
-  };
-
-  const handleSaveAi = async () => {
-    setIsSaving(true);
-    setSaveState("idle");
+  const handleSaveReminder = async () => {
+    if (reminderEnabled && reminderTime === "") return;
+    setIsSavingReminder(true);
+    setReminderState("idle");
     try {
       await authClient.updateUser({
-        aiEnabled,
-        aiModel,
+        reminderEnabled,
+        reminderTime: reminderEnabled ? reminderTime : null,
       } as unknown as Parameters<typeof authClient.updateUser>[0]);
-      setSaveState("saved");
+      setReminderState("saved");
     } catch {
-      setSaveState("error");
+      setReminderState("error");
     } finally {
-      setIsSaving(false);
+      setIsSavingReminder(false);
     }
   };
 
@@ -197,7 +179,7 @@ export default function SettingsPage() {
                   key={opt.value}
                   type="button"
                   aria-pressed={active}
-                  onClick={() => applyTheme(opt.value)}
+                  onClick={() => setTheme(opt.value)}
                   className={cn(
                     "flex flex-col items-center gap-2 rounded-3xl border px-3 py-4 text-sm font-medium transition-all focus-visible:outline-2 focus-visible:outline-ring",
                     active
@@ -228,73 +210,107 @@ export default function SettingsPage() {
                 If turned off, insights show raw data only.
               </p>
             </div>
-            <Switch
-              checked={aiEnabled}
-              onChange={(v) => {
-                setAiEnabled(v);
-                setSaveState("idle");
-              }}
-            />
-          </div>
-
-          <div className="mt-4 flex items-center justify-between gap-4 rounded-3xl border border-border bg-background px-4 py-3.5">
-            <div>
-              <p className="text-sm font-medium text-foreground">AI model</p>
-              <p className="text-xs text-muted-foreground">
-                Which model powers your insights.
-              </p>
+            <div className="flex items-center gap-3">
+              {isSaving ? (
+                <Loader2 className="size-4 animate-spin text-muted-foreground" />
+              ) : saveState === "saved" ? (
+                <p className="flex items-center gap-1 text-sm font-medium text-emerald-600 dark:text-emerald-400">
+                  <Check className="size-4" /> Saved
+                </p>
+              ) : saveState === "error" ? (
+                <p className="text-sm font-medium text-destructive">
+                  Couldn&apos;t save
+                </p>
+              ) : null}
+              <Switch
+                checked={aiEnabled}
+                disabled={isSaving}
+                onChange={(v) => {
+                  setAiEnabled(v);
+                  setSaveState("idle");
+                  setIsSaving(true);
+                  authClient
+                    .updateUser({
+                      aiEnabled: v,
+                    } as unknown as Parameters<typeof authClient.updateUser>[0])
+                    .then(() => setSaveState("saved"))
+                    .catch(() => setSaveState("error"))
+                    .finally(() => setIsSaving(false));
+                }}
+              />
             </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                render={
-                  <Button
-                    variant="outline"
-                    className="justify-between gap-2 min-w-36"
-                  />
-                }
-              >
-                {LABELS[aiModel] || "Gemini"}
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuRadioGroup
-                  value={aiModel}
-                  onValueChange={(v) => {
-                    setAiModel(v);
-                    setSaveState("idle");
-                  }}
-                >
-                  {modelOptions.map((m) => (
-                    <DropdownMenuRadioItem key={m.value} value={m.value}>
-                      {m.label}
-                    </DropdownMenuRadioItem>
-                  ))}
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
 
           <p className="mt-4 flex items-start gap-2 rounded-2xl bg-amber-500/10 px-3.5 py-2.5 text-xs leading-relaxed text-amber-700 dark:text-amber-400">
             <FlaskConical className="mt-0.5 size-3.5 shrink-0" />
-            This feature is experimental. AI-generated insights may be
-            imprecise and should not replace professional advice.
+            This feature is experimental. AI-generated insights may be imprecise
+            and should not replace professional advice.
           </p>
+        </SectionCard>
+
+        <SectionCard
+          title="Reminder"
+          description="A gentle daily nudge to check in — no streak pressure."
+          icon={Bell}
+        >
+          <div className="flex items-center justify-between gap-4 rounded-3xl border border-border bg-background px-4 py-3.5">
+            <div>
+              <p className="text-sm font-medium text-foreground">
+                Set a daily reminder
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Get a nudge at a time that suits you.
+              </p>
+            </div>
+            <Switch
+              checked={reminderEnabled}
+              onChange={(v) => {
+                setReminderEnabled(v);
+                setReminderState("idle");
+              }}
+            />
+          </div>
+
+          {reminderEnabled && (
+            <div className="mt-4">
+              <label
+                htmlFor="settings-reminder-time"
+                className="mb-2 flex items-center gap-2 text-sm font-medium text-foreground"
+              >
+                Daily reminder time
+              </label>
+              <Input
+                id="settings-reminder-time"
+                type="time"
+                value={reminderTime}
+                onChange={(e) => {
+                  setReminderTime(e.target.value);
+                  setReminderState("idle");
+                }}
+                className="h-11"
+              />
+            </div>
+          )}
 
           <div className="mt-4 flex items-center justify-end gap-3">
-            {saveState === "saved" && (
+            {reminderState === "saved" && (
               <p className="flex items-center gap-1 text-sm font-medium text-emerald-600 dark:text-emerald-400">
                 <Check className="size-4" /> Saved
               </p>
             )}
-            {saveState === "error" && (
+            {reminderState === "error" && (
               <p className="text-sm font-medium text-destructive">
                 Couldn&apos;t save. Try again.
               </p>
             )}
-            <Button onClick={handleSaveAi} disabled={isSaving}>
-              {isSaving ? (
+            <Button
+              onClick={handleSaveReminder}
+              disabled={isSavingReminder || (reminderEnabled && !reminderTime)}
+            >
+              {isSavingReminder ? (
                 <Loader2 className="size-4 animate-spin" />
               ) : (
-                "Save AI settings"
+                "Save reminder"
               )}
             </Button>
           </div>

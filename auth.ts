@@ -21,7 +21,6 @@ export const auth = betterAuth({
       reminderEnabled: { type: "boolean", defaultValue: false },
       reminderTime: { type: "string", required: false },
       aiEnabled: { type: "boolean", defaultValue: false },
-      aiModel: { type: "string", defaultValue: "gemini" },
     },
   },
   socialProviders: {

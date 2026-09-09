@@ -23,12 +23,14 @@ model User {
   reminderEnabled  Boolean  @default(false)
   reminderTime  String?
   aiEnabled   Boolean  @default(false)
-  aiModel     String   @default("gemini")
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
   notes         Note[]
+  insights      WeeklyInsight[]
+  lastInsightAt DateTime?
+  insightFrequencyDays Int @default(7)
 
   @@unique([email])
   @@map("user")
@@ -102,4 +104,34 @@ model Note{
   date DateTime @default(now())
   updatedAt  DateTime @updatedAt
   @@index([userId,date])
+}
+
+enum InsightMode{
+  RULE_BASED
+  AI
+}
+
+enum InsightFeedback{
+  HELPFUL
+  NOT_HELPFUL
+}
+
+model WeeklyInsight{
+  id String @id @default(cuid())
+  userId String
+  user User @relation(fields: [userId],references: [id],onDelete: Cascade)
+  periodStart DateTime
+  periodEnd   DateTime
+  mode        InsightMode
+  noteCount   Int
+  summary     String?
+  highlights  Json
+  themes      String[]     @default([])
+  experiments  String[]    @default([])
+  feedback      InsightFeedback?
+  createdAt DateTime @default(now())
+  @@unique([userId,periodStart])
+  @@index([userId,periodStart])
+
+
 }

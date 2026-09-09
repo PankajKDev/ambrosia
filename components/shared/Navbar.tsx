@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Bell,
   CalendarDays,
   CircleHelp,
   Compass,
@@ -16,7 +15,6 @@ import {
   TrendingUp,
   Zap,
 } from "lucide-react";
-
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -48,7 +46,6 @@ const appLinks = [
 
 const profileItems = [
   { href: "/account/settings", label: "Settings", icon: Settings },
-  { href: "/account/reminders", label: "Reminders", icon: Bell },
   { href: "/account/export", label: "Export data", icon: Download },
   { href: "/help", label: "Help & feedback", icon: CircleHelp },
 ];
@@ -200,7 +197,7 @@ function Navbar() {
               <Logo href="/" />
             </SignedOut>
             <SignedIn>
-              <Logo href="/today" />
+              <Logo href="/" />
             </SignedIn>
           </div>
           <div className="md:hidden">
@@ -210,7 +207,7 @@ function Navbar() {
           </div>
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 md:hidden">
             <SignedIn>
-              <Logo href="/today" />
+              <Logo href="/" />
             </SignedIn>
           </div>
 
