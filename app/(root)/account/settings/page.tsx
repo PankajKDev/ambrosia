@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Bell,
   Check,
   FlaskConical,
   Laptop,
@@ -15,8 +14,6 @@ import {
 } from "lucide-react";
 
 import { authClient } from "@/lib/auth-client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useTheme } from "@teispace/next-themes";
 import { cn } from "@/lib/utils";
 
@@ -28,8 +25,6 @@ const themeOptions = [
 
 type SettingsUser = {
   aiEnabled?: boolean;
-  reminderEnabled?: boolean;
-  reminderTime?: string;
 };
 
 function SectionCard({
@@ -117,37 +112,12 @@ export default function SettingsPage() {
   const [saveState, setSaveState] = useState<"idle" | "saved" | "error">(
     "idle",
   );
-  const [reminderEnabled, setReminderEnabled] = useState(
-    Boolean(user?.reminderEnabled),
-  );
-  const [reminderTime, setReminderTime] = useState(user?.reminderTime || "");
-  const [isSavingReminder, setIsSavingReminder] = useState(false);
-  const [reminderState, setReminderState] = useState<
-    "idle" | "saved" | "error"
-  >("idle");
 
   if (isPending) return null;
   if (!user) {
     router.replace("/sign-in");
     return null;
   }
-
-  const handleSaveReminder = async () => {
-    if (reminderEnabled && reminderTime === "") return;
-    setIsSavingReminder(true);
-    setReminderState("idle");
-    try {
-      await authClient.updateUser({
-        reminderEnabled,
-        reminderTime: reminderEnabled ? reminderTime : null,
-      } as unknown as Parameters<typeof authClient.updateUser>[0]);
-      setReminderState("saved");
-    } catch {
-      setReminderState("error");
-    } finally {
-      setIsSavingReminder(false);
-    }
-  };
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-10 sm:px-6">
@@ -246,74 +216,6 @@ export default function SettingsPage() {
             This feature is experimental. AI-generated insights may be imprecise
             and should not replace professional advice.
           </p>
-        </SectionCard>
-
-        <SectionCard
-          title="Reminder"
-          description="A gentle daily nudge to check in — no streak pressure."
-          icon={Bell}
-        >
-          <div className="flex items-center justify-between gap-4 rounded-3xl border border-border bg-background px-4 py-3.5">
-            <div>
-              <p className="text-sm font-medium text-foreground">
-                Set a daily reminder
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Get a nudge at a time that suits you.
-              </p>
-            </div>
-            <Switch
-              checked={reminderEnabled}
-              onChange={(v) => {
-                setReminderEnabled(v);
-                setReminderState("idle");
-              }}
-            />
-          </div>
-
-          {reminderEnabled && (
-            <div className="mt-4">
-              <label
-                htmlFor="settings-reminder-time"
-                className="mb-2 flex items-center gap-2 text-sm font-medium text-foreground"
-              >
-                Daily reminder time
-              </label>
-              <Input
-                id="settings-reminder-time"
-                type="time"
-                value={reminderTime}
-                onChange={(e) => {
-                  setReminderTime(e.target.value);
-                  setReminderState("idle");
-                }}
-                className="h-11"
-              />
-            </div>
-          )}
-
-          <div className="mt-4 flex items-center justify-end gap-3">
-            {reminderState === "saved" && (
-              <p className="flex items-center gap-1 text-sm font-medium text-emerald-600 dark:text-emerald-400">
-                <Check className="size-4" /> Saved
-              </p>
-            )}
-            {reminderState === "error" && (
-              <p className="text-sm font-medium text-destructive">
-                Couldn&apos;t save. Try again.
-              </p>
-            )}
-            <Button
-              onClick={handleSaveReminder}
-              disabled={isSavingReminder || (reminderEnabled && !reminderTime)}
-            >
-              {isSavingReminder ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                "Save reminder"
-              )}
-            </Button>
-          </div>
         </SectionCard>
       </div>
     </div>

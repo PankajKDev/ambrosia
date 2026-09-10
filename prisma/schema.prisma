@@ -20,8 +20,6 @@ model User {
   image         String?
   isOnboarded   Boolean    @default(false)
   focusAreas    String[]   @default([])
-  reminderEnabled  Boolean  @default(false)
-  reminderTime  String?
   aiEnabled   Boolean  @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt

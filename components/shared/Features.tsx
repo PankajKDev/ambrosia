@@ -1,5 +1,4 @@
 import {
-  Bell,
   HeartPulse,
   Lightbulb,
   Lock,
@@ -189,24 +188,7 @@ function Features() {
             </div>
           </Card>
 
-          <Card className="lg:col-span-7 lg:p-10">
-            <IconTile>
-              <Bell className="size-5" />
-            </IconTile>
-            <Title>Gentle reminders, no streak pressure</Title>
-            <Description>
-              Nudges show up as a warm suggestion — never a red count that
-              shames a missed day.
-            </Description>
-            <span
-              aria-hidden="true"
-              className="mt-8 w-fit rounded-full border border-dashed border-border px-4 py-1.5 text-xs font-medium text-muted-foreground"
-            >
-              Sat, 9:00am — a kind nudge, not a red counter
-            </span>
-          </Card>
-
-          <Card className="gap-8 lg:col-span-12 lg:flex-row lg:items-center lg:p-12">
+          <Card className="gap-8 lg:col-span-7 lg:flex-row lg:items-center lg:p-12">
             <div className="flex-1">
               <IconTile>
                 <TrendingUp className="size-5" />
