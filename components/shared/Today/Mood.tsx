@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Loader2, PenLine, Sparkles, Sun, Tags } from "lucide-react";
 
@@ -55,6 +56,7 @@ function Mood({
   onChange?: (value: string) => void;
   defaultValue?: string;
 }) {
+  const router = useRouter();
   const [moodInternal, setMoodInternal] = useState<string | undefined>(
     defaultValue,
   );
@@ -115,6 +117,7 @@ function Mood({
       setNote("");
       setTags(new Set());
       setDialogOpen(true);
+      router.refresh();
     } catch {
       setSubmitError(
         "Something went wrong saving your note. Please try again.",

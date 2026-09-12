@@ -1,9 +1,5 @@
 import { auth } from "@/auth";
-import {
-  generateAIBasedInsight,
-  generateRuleBasedInsight,
-} from "@/lib/insights/generate";
-import { prisma } from "@/lib/prisma";
+import { ensureInsight } from "@/lib/insights/service";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -11,50 +7,29 @@ export async function POST(request: Request) {
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const today = new Date();
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-  const notes = await prisma.note.findMany({
-    where: {
+  try {
+    const result = await ensureInsight({
       userId: session.user.id,
-      date: {
-        gte: sevenDaysAgo,
-      },
-    },
-    orderBy: {
-      date: "desc",
-    },
-  });
+      aiEnabled: Boolean((session.user as { aiEnabled?: boolean }).aiEnabled),
+      focusAreas: (session.user as { focusAreas?: string[] }).focusAreas ?? [],
+    });
 
-  if (notes.length < 3) {
+    if (result.unchanged) {
+      return NextResponse.json(
+        { message: "up to date", insight: result.insight },
+        { status: 200 },
+      );
+    }
     return NextResponse.json(
-      { message: "Not enough notes to generate an insight" },
-      { status: 400 },
+      { message: "success", insight: result.insight },
+      { status: 201 },
     );
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Failed to generate insight";
+    const status = (e as { status?: number }).status ?? 500;
+    if (status === 400)
+      return NextResponse.json({ message: msg }, { status: 400 });
+    return NextResponse.json({ message: msg }, { status: 500 });
   }
-
-  const ProducedInsight = session.user.aiEnabled
-    ? await generateAIBasedInsight({
-        userId: session.user.id,
-        notes,
-        periodStart: sevenDaysAgo,
-        periodEnd: today,
-        focusAreas:
-          (session.user as { focusAreas?: string[] }).focusAreas ?? [],
-      })
-    : await generateRuleBasedInsight({
-        userId: session.user.id,
-        notes,
-        periodStart: sevenDaysAgo,
-        periodEnd: today,
-      });
-
-  return NextResponse.json(
-    {
-      message: "success",
-      insight: ProducedInsight,
-    },
-    { status: 201 },
-  );
 }

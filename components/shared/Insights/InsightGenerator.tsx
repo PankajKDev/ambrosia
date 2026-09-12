@@ -21,7 +21,7 @@ export default function InsightGenerator({ hasAny }: { hasAny: boolean }) {
         const res = await fetch("/api/insights", { method: "POST" });
         if (cancelled) return;
 
-        if (res.status === 201) {
+        if (res.status === 201 || res.status === 200) {
           setStatus("done");
           router.refresh();
         } else if (res.status === 400) {

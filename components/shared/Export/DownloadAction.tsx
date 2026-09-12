@@ -1,51 +1,9 @@
-"use client";
-
-import { useState } from "react";
-import { Check, Download, Loader2 } from "lucide-react";
+import { Download } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
 export function DownloadAction() {
-  const [isDownloading, setIsDownloading] = useState(false);
-  const [done, setDone] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
   const today = new Date().toISOString().slice(0, 10);
-
-  const handleDownload = async () => {
-    setIsDownloading(true);
-    setError(null);
-    setDone(false);
-    try {
-      const res = await fetch("/api/export", { cache: "no-store" });
-      if (!res.ok) {
-        const body = (await res.json().catch(() => null)) as {
-          error?: string;
-        } | null;
-        throw new Error(body?.error ?? "Failed to export");
-      }
-
-      const disposition = res.headers.get("Content-Disposition");
-      const filenameMatch = disposition?.match(/filename="?([^"]+)"?/);
-      const filename = filenameMatch?.[1] ?? `ambrosia-export-${today}.json`;
-
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-      setDone(true);
-      setTimeout(() => setDone(false), 3000);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to export");
-    } finally {
-      setIsDownloading(false);
-    }
-  };
 
   return (
     <>
@@ -59,36 +17,18 @@ export function DownloadAction() {
         </p>
       </div>
 
-      {error && (
-        <p
-          role="alert"
-          className="mt-4 rounded-2xl border border-destructive/20 bg-destructive/10 px-3.5 py-2.5 text-sm font-medium text-destructive"
-        >
-          {error}
-        </p>
-      )}
-
-      {done && !error && (
-        <p className="mt-4 flex items-center gap-1.5 text-sm font-medium text-emerald-600 dark:text-emerald-400">
-          <Check className="size-4" /> Downloaded. Check your downloads folder.
-        </p>
-      )}
-
       <Button
-        onClick={handleDownload}
-        disabled={isDownloading}
+        render={<a href="/api/export" download={`ambrosia-export-${today}.json`} />}
         size="lg"
         className="mt-4 w-full"
       >
-        {isDownloading ? (
-          <Loader2 className="size-4 animate-spin" />
-        ) : done ? (
-          <Check className="size-4" />
-        ) : (
-          <Download className="size-4" />
-        )}
-        {isDownloading ? "Preparing…" : done ? "Downloaded" : "Download JSON"}
+        <Download className="size-4" />
+        Download JSON
       </Button>
+
+      <p className="mt-3 text-center text-xs text-muted-foreground">
+        Format is JSON. Need CSV? Let us know.
+      </p>
     </>
   );
 }

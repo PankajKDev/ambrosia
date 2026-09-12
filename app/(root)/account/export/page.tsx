@@ -6,7 +6,7 @@ import { auth } from "@/auth";
 import { DownloadAction } from "@/components/shared/Export/DownloadAction";
 import { SectionCard } from "@/components/shared/Export/SectionCard";
 
-export default async function ExportPage() {
+export default async function page() {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user) redirect("/sign-in");
 
