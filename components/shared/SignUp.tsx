@@ -12,7 +12,13 @@ import { Separator } from "@/components/ui/separator";
 import { useSignUp } from "@/hooks/use-sign-up";
 
 function SignUp() {
-  const { signUpWithEmail, signUpWithGoogle, isLoading, error } = useSignUp();
+  const {
+    signUpWithEmail,
+    signUpWithGoogle,
+    isLoading,
+    error,
+    resendVerificationEmail,
+  } = useSignUp();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -79,11 +85,22 @@ function SignUp() {
         </div>
 
         {error && (
-          <p role="alert" className="text-sm font-medium text-destructive">
-            {error}
-          </p>
-        )}
+          <div className="space-y-3">
+            <p role="alert" className="text-sm font-medium text-destructive">
+              {error}
+            </p>
 
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={() => resendVerificationEmail(email)}
+              disabled={isLoading || !email}
+            >
+              Resend verification email
+            </Button>
+          </div>
+        )}
         <Button type="submit" disabled={isLoading} className="w-full">
           {isLoading ? (
             <>
