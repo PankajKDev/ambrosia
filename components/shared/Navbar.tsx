@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   CalendarDays,
-  CircleHelp,
   Compass,
   Download,
   LogOut,
@@ -31,9 +30,8 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import QuickNote from "./QuickNote";
 
 const marketingLinks = [
-  { href: "/how-it-works", label: "How it works" },
-  { href: "/features", label: "Features" },
-  { href: "/privacy", label: "Privacy" },
+  { href: "/#how-it-works", label: "How it works" },
+  { href: "/#features", label: "Features" },
   { href: "/pricing", label: "Pricing" },
 ];
 
@@ -47,7 +45,6 @@ const appLinks = [
 const profileItems = [
   { href: "/account/settings", label: "Settings", icon: Settings },
   { href: "/account/export", label: "Export data", icon: Download },
-  { href: "/help", label: "Help & feedback", icon: CircleHelp },
 ];
 
 function Logo({ href }: { href: string }) {

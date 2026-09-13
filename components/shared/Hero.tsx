@@ -34,7 +34,7 @@ function Hero() {
           </h1>
           <p className="mx-auto mt-5 max-w-lg text-pretty text-lg text-muted-foreground lg:mx-0">
             Ambrosia helps ADHD minds quickly capture thoughts, check in with
-            mood and energy, and discover gentle patterns over time.
+            mood, and discover gentle patterns over time.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start">
             <Link
@@ -44,7 +44,7 @@ function Hero() {
               Start free
             </Link>
             <Link
-              href="/how-it-works"
+              href="/#how-it-works"
               className="w-full rounded-4xl px-4 py-2.5 text-sm font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline sm:w-auto"
             >
               See how it works

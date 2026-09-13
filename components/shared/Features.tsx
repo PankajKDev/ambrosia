@@ -1,10 +1,10 @@
 import {
+  Compass,
+  Download,
   HeartPulse,
-  Lightbulb,
   Lock,
   Sparkles,
   Tags,
-  TrendingUp,
   Zap,
 } from "lucide-react";
 
@@ -16,13 +16,6 @@ const moods = [
   { label: "Okay", tone: "bg-(--mood-soft)" },
   { label: "Good", tone: "bg-(--mood-gold)" },
   { label: "Great", tone: "bg-(--mood-rose)" },
-];
-
-const trends = [
-  { label: "Sleep", dots: [0, 1, 1, 0, 1, 0, 1, 1] },
-  { label: "Focus", dots: [1, 0, 0, 1, 1, 1, 0, 1] },
-  { label: "Stress", dots: [1, 0, 0, 0, 0, 1, 1, 0] },
-  { label: "Mood", dots: [0, 1, 0, 1, 1, 0, 1, 1] },
 ];
 
 function IconTile({ children }: { children: React.ReactNode }) {
@@ -86,37 +79,12 @@ function MoodDots() {
   );
 }
 
-function TrendViz() {
-  return (
-    <div
-      aria-hidden="true"
-      className="grid max-w-sm flex-1 gap-3 rounded-3xl border border-border bg-background/60 p-5"
-    >
-      {trends.map((row) => (
-        <div key={row.label} className="flex items-center justify-between gap-4">
-          <span className="w-14 shrink-0 text-xs font-medium text-muted-foreground">
-            {row.label}
-          </span>
-          <div className="flex gap-1.5">
-            {row.dots.map((on, i) => (
-              <span
-                key={i}
-                className={cn(
-                  "size-2.5 rounded-full",
-                  on ? "bg-(--mood-gold)" : "bg-muted",
-                )}
-              />
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 function Features() {
   return (
-    <section className="relative overflow-hidden py-16 lg:py-24">
+    <section
+      id="features"
+      className="relative overflow-hidden py-16 lg:py-24"
+    >
       <div
         aria-hidden="true"
         className="absolute inset-x-0 top-0 -z-10 h-96 bg-radial-[at_50%_0%] from-(--hero-aura) via-(--hero-wash) to-transparent"
@@ -137,7 +105,7 @@ function Features() {
             <IconTile>
               <HeartPulse className="size-5" />
             </IconTile>
-            <Title>Fast mood &amp; energy check-ins</Title>
+            <Title>Fast mood check-ins</Title>
             <Description>
               Capture where you&apos;re at in a single tap — whether it&apos;s
               a foggy afternoon or a wired, high-energy evening.
@@ -188,55 +156,64 @@ function Features() {
             </div>
           </Card>
 
-          <Card className="gap-8 lg:col-span-7 lg:flex-row lg:items-center lg:p-12">
-            <div className="flex-1">
-              <IconTile>
-                <TrendingUp className="size-5" />
-              </IconTile>
-              <h3 className="mt-5 font-heading text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-                Trend views that connect the dots
-              </h3>
-              <Description>
-                Sleep, focus, stress, and mood side by side over time, so
-                patterns surface without you having to hunt for them.
-              </Description>
+          <Card className="bg-(--mood-soft)/50 lg:col-span-7 lg:p-10">
+            <IconTile>
+              <Sparkles className="size-5" />
+            </IconTile>
+            <Title>Weekly insights</Title>
+            <Description>
+              Scattered entries become an honest weekly summary — dominant
+              mood, trend, and small things to try next week.
+            </Description>
+            <div className="mt-8 grid max-w-sm gap-2" aria-hidden="true">
+              <div className="flex items-center gap-2 rounded-2xl bg-muted px-3 py-2 text-xs">
+                <span className="font-medium text-muted-foreground">Dominant mood</span>
+                <span className="ml-auto font-semibold text-foreground">okay</span>
+              </div>
+              <div className="flex items-center gap-2 rounded-2xl bg-muted px-3 py-2 text-xs">
+                <span className="font-medium text-muted-foreground">Trend</span>
+                <span className="ml-auto font-semibold text-foreground">stable</span>
+              </div>
             </div>
-            <TrendViz />
           </Card>
         </div>
 
         <div className="mt-5 grid gap-5 md:grid-cols-2">
-          <Card className="bg-(--mood-soft)/50">
-            <IconTile>
-              <Sparkles className="size-5" />
-            </IconTile>
-            <Title>Weekly reflections</Title>
-            <Description>
-              Scattered entries become simple, personal insights. Each week,
-              Ambrosia turns small moments into one honest picture.
-            </Description>
-          </Card>
           <Card>
             <IconTile>
-              <Lightbulb className="size-5" />
+              <Compass className="size-5" />
             </IconTile>
-            <Title>ADHD-friendly idea library</Title>
+            <Title>Explore resources</Title>
             <Description>
-              Feeling stuck, overwhelmed, distracted, or low on energy? Browse
-              small, practical ideas and pick one realistic next step.
+              Peer communities and trusted articles — separate from your
+              journal, there when you want context.
             </Description>
             <div className="mt-8 flex flex-wrap gap-2" aria-hidden="true">
-              {["stuck", "overwhelmed", "distracted", "low energy"].map(
-                (tone) => (
-                  <span
-                    key={tone}
-                    className="rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground"
-                  >
-                    {tone}
-                  </span>
-                ),
-              )}
+              {["Communities", "Articles"].map((tone) => (
+                <span
+                  key={tone}
+                  className="rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground"
+                >
+                  {tone}
+                </span>
+              ))}
             </div>
+          </Card>
+          <Card className="bg-(--mood-soft)/30">
+            <IconTile>
+              <Download className="size-5" />
+            </IconTile>
+            <Title>Export your data</Title>
+            <Description>
+              One JSON file with your notes, insights, and profile — private by
+              default, portable whenever you need it.
+            </Description>
+            <span
+              aria-hidden="true"
+              className="mt-8 w-fit rounded-full border border-dashed border-border bg-background px-3 py-1 font-mono text-xs font-medium text-muted-foreground"
+            >
+              ambrosia-export-….json
+            </span>
           </Card>
         </div>
 
@@ -249,8 +226,8 @@ function Features() {
               Your notes, your control
             </h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Private by default. You stay in control of your notes and can
-              export or delete your data whenever you choose.
+              Private by default. Export your data as JSON or delete notes
+              whenever you choose.
             </p>
           </div>
         </div>

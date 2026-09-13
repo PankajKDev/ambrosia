@@ -13,7 +13,7 @@ const steps = [
     icon: NotebookPen,
     title: "Capture when it appears",
     description:
-      "Save thoughts, worries, wins, or reminders whenever they appear — no need to organize everything perfectly.",
+      "Save thoughts, worries, or wins whenever they appear — no need to organize everything perfectly.",
   },
   {
     number: "03",
@@ -53,7 +53,10 @@ function StepCard({
 
 function HowItWorks() {
   return (
-    <section className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+    <section
+      id="how-it-works"
+      className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24"
+    >
       <div className="mx-auto max-w-2xl text-center">
         <h2 className="text-balance font-heading text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           Ambrosia works in three gentle steps

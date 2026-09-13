@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <>
       <SignedOut>
-        <Hero />;
+        <Hero />
         <HowItWorks />
         <Features />
       </SignedOut>
