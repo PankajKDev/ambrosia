@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   title: "Ambrosia",
   description: "Journaling simplified for ADHD",
   icons: {
-    icon: "/logo.svg",
+    icon: "/logo-white.svg",
   },
 };
 

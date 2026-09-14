@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="/logo.svg" alt="Ambrosia" width="120" style="background:#fff;border-radius:12px;padding:12px" />
+  <img src="public/logo-white.svg" alt="Ambrosia" width="120" />
 </div>
 
 # Ambrosia
@@ -12,9 +12,8 @@ Live at **[ambrosia.sainte.cloud](https://ambrosia.sainte.cloud)**.
 
 ## Screenshots
 
-![Home (logged out)](/screenshots/unauth-home.png)
-
-![Home (logged in)](/screenshots/authenticated-home.png)
+![Home (logged out)](public/screenshots/unauth-home.png)
+![Home (logged in)](public/screenshots/authenticated-home.png)
 
 ## Features
 
@@ -66,17 +65,17 @@ Copy `.env.example` to `.env` and fill in the values:
 cp .env.example .env
 ```
 
-| Variable | Required | Purpose |
-| --- | --- | --- |
-| `DATABASE_URL` | ✅ | PostgreSQL connection string |
-| `BETTER_AUTH_SECRET` | ✅ | Run `npx auth secret` to generate |
-| `BETTER_AUTH_URL` | ✅ | e.g. `http://localhost:3000` in dev |
-| `NEXT_PUBLIC_BETTER_AUTH_URL` | ✅ | Client-facing auth URL |
-| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Google login | OAuth 2.0 credentials from Google Cloud Console |
-| `OAUTH_PROXY_SECRET` | If using `oAuthProxy` | Secret for the OAuth proxy plugin |
-| `GROQ_API_KEY` | AI insights | Groq API key |
-| `GOOGLE_GENERATIVE_API_KEY` | AI insights | Google Gemini API key |
-| `RESEND_API_KEY` | Email flows | Resend API key for verification / reset emails |
+| Variable                                    | Required              | Purpose                                         |
+| ------------------------------------------- | --------------------- | ----------------------------------------------- |
+| `DATABASE_URL`                              | ✅                    | PostgreSQL connection string                    |
+| `BETTER_AUTH_SECRET`                        | ✅                    | Run `npx auth secret` to generate               |
+| `BETTER_AUTH_URL`                           | ✅                    | e.g. `http://localhost:3000` in dev             |
+| `NEXT_PUBLIC_BETTER_AUTH_URL`               | ✅                    | Client-facing auth URL                          |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Google login          | OAuth 2.0 credentials from Google Cloud Console |
+| `OAUTH_PROXY_SECRET`                        | If using `oAuthProxy` | Secret for the OAuth proxy plugin               |
+| `GROQ_API_KEY`                              | AI insights           | Groq API key                                    |
+| `GOOGLE_GENERATIVE_API_KEY`                 | AI insights           | Google Gemini API key                           |
+| `RESEND_API_KEY`                            | Email flows           | Resend API key for verification / reset emails  |
 
 Email flows (verification, password reset) require a verified sender domain on
 Resend; `trustedOrigins` in `auth.ts` must include your app URL.
