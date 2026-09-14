@@ -1,18 +1,11 @@
-import { google } from "@ai-sdk/google";
-import { groq } from "@ai-sdk/groq";
-
-export const MODELS = [
-  { label: "gemini-flash-latest", model: google("gemini-flash-latest") },
-  { label: "groq/openai/gpt-oss-120b", model: groq("openai/gpt-oss-120b") },
-  { label: "groq/openai/gpt-oss-20b", model: groq("openai/gpt-oss-20b") },
-];
-
-export const SYSTEM_PROMPT =
-  "You are reviewing a week of mood/note check-ins from a wellbeing app for adults with ADHD. " +
-  "Base every observation strictly on the notes provided — never invent details, and avoid clinical " +
-  "or diagnostic language. Be specific: reference the actual moods, tags, or content mentioned rather " +
-  "than generic advice. Keep the tone warm and non-judgmental. Respond with a single JSON object " +
-  "matching the given schema.";
+import {
+  CalendarDays,
+  Compass,
+  Download,
+  NotebookPen,
+  Settings,
+  TrendingUp,
+} from "lucide-react";
 
 export const adhdCommunities = [
   {
@@ -109,4 +102,40 @@ export const adhdArticleResources = [
     description:
       "Adult-focused ADHD guide with practical explanations and next steps.",
   },
+];
+
+export const moodLevels = [
+  { value: "low", dbValue: "LOW", label: "Low", tone: "bg-(--mood-soft)" },
+  { value: "meh", dbValue: "MEH", label: "Meh", tone: "bg-(--mood-gold)/35" },
+  {
+    value: "okay",
+    dbValue: "OKAY",
+    label: "Okay",
+    tone: "bg-(--mood-gold)/60",
+  },
+  { value: "good", dbValue: "GOOD", label: "Good", tone: "bg-(--mood-gold)" },
+  {
+    value: "great",
+    dbValue: "GREAT",
+    label: "Great",
+    tone: "bg-(--mood-rose)",
+  },
+] as const;
+
+export const appLinks = [
+  { href: "/", label: "Today", icon: CalendarDays },
+  { href: "/notes", label: "Notes", icon: NotebookPen },
+  { href: "/insights", label: "Insights", icon: TrendingUp },
+  { href: "/explore", label: "Explore", icon: Compass },
+];
+
+export const profileItems = [
+  { href: "/account/settings", label: "Settings", icon: Settings },
+  { href: "/account/export", label: "Export data", icon: Download },
+];
+
+export const marketingLinks = [
+  { href: "/#how-it-works", label: "How it works" },
+  { href: "/#features", label: "Features" },
+  { href: "/pricing", label: "Pricing" },
 ];

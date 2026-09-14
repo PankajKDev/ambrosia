@@ -1,4 +1,4 @@
-import ForgotPassword from "@/components/shared/ForgotPassword";
+import ForgotPassword from "@/components/shared/auth/ForgotPassword";
 
 function page() {
   return <ForgotPassword />;

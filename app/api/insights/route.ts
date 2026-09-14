@@ -11,8 +11,8 @@ export async function POST(request: Request) {
   try {
     const result = await ensureInsight({
       userId: session.user.id,
-      aiEnabled: Boolean((session.user as { aiEnabled?: boolean }).aiEnabled),
-      focusAreas: (session.user as { focusAreas?: string[] }).focusAreas ?? [],
+      aiEnabled: session.user.aiEnabled ?? false,
+      focusAreas: session.user.focusAreas ?? [],
     });
 
     if (result.unchanged) {

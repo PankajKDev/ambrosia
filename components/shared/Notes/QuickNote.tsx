@@ -15,15 +15,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import type { TodayCheckIn } from "./Today/Mood";
-
-const levels = [
-  { value: "low", label: "Low", tone: "bg-(--mood-soft)" },
-  { value: "meh", label: "Meh", tone: "bg-(--mood-gold)/35" },
-  { value: "okay", label: "Okay", tone: "bg-(--mood-gold)/60" },
-  { value: "good", label: "Good", tone: "bg-(--mood-gold)" },
-  { value: "great", label: "Great", tone: "bg-(--mood-rose)" },
-];
+import type { TodayCheckIn } from "../Today/Mood";
+import { moodLevels } from "@/constants";
 
 type QuickNoteProps = {
   open: boolean;
@@ -117,7 +110,7 @@ export default function QuickNote({ open, onOpenChange }: QuickNoteProps) {
               aria-label="Mood"
               className="mt-3 grid grid-cols-5 gap-2"
             >
-              {levels.map((level) => {
+              {moodLevels.map((level) => {
                 const active = mood === level.value;
                 return (
                   <button

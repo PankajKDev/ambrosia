@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { buttonVariants } from "@/components/ui/button";
-import TodayPreview from "@/components/shared/TodayPreview";
+import TodayPreview from "@/components/shared/Today/TodayPreview";
 import { cn } from "@/lib/utils";
 
 function TrustLine() {

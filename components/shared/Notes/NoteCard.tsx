@@ -15,14 +15,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-
-const moodMeta: Record<string, { label: string; tone: string }> = {
-  LOW: { label: "Low", tone: "bg-(--mood-soft)" },
-  MEH: { label: "Meh", tone: "bg-(--mood-gold)/35" },
-  OKAY: { label: "Okay", tone: "bg-(--mood-gold)/60" },
-  GOOD: { label: "Good", tone: "bg-(--mood-gold)" },
-  GREAT: { label: "Great", tone: "bg-(--mood-rose)" },
-};
+import { moodLevels } from "@/constants";
 
 export type Note = {
   id: string;
@@ -64,7 +57,9 @@ export default function NoteCard({ note }: { note: Note }) {
   const [deleting, setDeleting] = useState(false);
   const [confirming, setConfirming] = useState(false);
 
-  const meta = note.mood ? moodMeta[note.mood] : undefined;
+  const meta = note.mood
+    ? moodLevels.find((level) => level.dbValue === note.mood)
+    : undefined;
 
   const close = () => {
     setDetailOpen(false);
@@ -151,10 +146,13 @@ export default function NoteCard({ note }: { note: Note }) {
         )}
       </article>
 
-      <Dialog open={detailOpen} onOpenChange={(open) => {
-        setDetailOpen(open);
-        if (!open) setConfirming(false);
-      }}>
+      <Dialog
+        open={detailOpen}
+        onOpenChange={(open) => {
+          setDetailOpen(open);
+          if (!open) setConfirming(false);
+        }}
+      >
         <DialogContent className="max-w-2xl gap-6 p-6 sm:p-8">
           <DialogHeader className="gap-3">
             <div className="flex items-center justify-between gap-3">
@@ -235,9 +233,7 @@ export default function NoteCard({ note }: { note: Note }) {
                 Delete
               </Button>
               <DialogClose
-                render={
-                  <Button variant="ghost" className="w-full sm:w-auto" />
-                }
+                render={<Button variant="ghost" className="w-full sm:w-auto" />}
               >
                 Close
               </DialogClose>

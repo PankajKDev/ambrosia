@@ -20,8 +20,3 @@ export function getWeekFor(date: Date): { weekStart: Date; weekEnd: Date } {
   weekEnd.setUTCHours(23, 59, 59, 999);
   return { weekStart, weekEnd };
 }
-
-export function getCurrentWeekWindow(): { periodStart: Date; periodEnd: Date } {
-  const { weekStart, weekEnd } = getWeekFor(new Date());
-  return { periodStart: weekStart, periodEnd: weekEnd };
-}

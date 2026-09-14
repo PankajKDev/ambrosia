@@ -16,6 +16,8 @@ import {
 import { authClient } from "@/lib/auth-client";
 import { useTheme } from "@teispace/next-themes";
 import { cn } from "@/lib/utils";
+import Switch from "@/components/ui/switch";
+import SectionCard from "@/components/shared/Settings/SectionCard";
 
 const themeOptions = [
   { value: "light", label: "Light", icon: Sun },
@@ -23,88 +25,10 @@ const themeOptions = [
   { value: "system", label: "System", icon: Laptop },
 ];
 
-type SettingsUser = {
-  aiEnabled?: boolean;
-};
-
-function SectionCard({
-  title,
-  description,
-  icon: Icon,
-  badge,
-  children,
-}: {
-  title: string;
-  description: string;
-  icon: React.ComponentType<{ className?: string }>;
-  badge?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="rounded-4xl border border-border bg-background/85 p-6 shadow-sm sm:p-7">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-start gap-3">
-          <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-(--mood-soft) text-(--mood-gold)">
-            <Icon className="size-5" />
-          </span>
-          <div>
-            <h2 className="font-heading text-lg font-semibold tracking-tight text-foreground">
-              {title}
-            </h2>
-            <p className="mt-0.5 text-sm leading-relaxed text-muted-foreground">
-              {description}
-            </p>
-          </div>
-        </div>
-        {badge && (
-          <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/10 px-2.5 py-0.5 text-xs font-medium text-amber-600 dark:text-amber-400">
-            <FlaskConical className="size-3" />
-            {badge}
-          </span>
-        )}
-      </div>
-      <div className="mt-6">{children}</div>
-    </section>
-  );
-}
-
-function Switch({
-  checked,
-  onChange,
-  disabled,
-}: {
-  checked: boolean;
-  onChange: (checked: boolean) => void;
-  disabled?: boolean;
-}) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      disabled={disabled}
-      onClick={() => onChange(!checked)}
-      className={cn(
-        "relative inline-flex h-7 w-12 shrink-0 items-center rounded-full border transition-colors focus-visible:outline-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50",
-        checked
-          ? "border-(--mood-gold)/50 bg-(--mood-gold)"
-          : "border-border bg-muted",
-      )}
-    >
-      <span
-        className={cn(
-          "inline-block size-5 transform rounded-full bg-background shadow transition-transform",
-          checked ? "translate-x-6" : "translate-x-1",
-        )}
-      />
-    </button>
-  );
-}
-
 export default function SettingsPage() {
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
-  const user = session?.user as unknown as SettingsUser | null;
+  const user = session?.user ?? null;
   const { theme, setTheme } = useTheme();
 
   const [aiEnabled, setAiEnabled] = useState(Boolean(user?.aiEnabled));
@@ -202,7 +126,7 @@ export default function SettingsPage() {
                   authClient
                     .updateUser({
                       aiEnabled: v,
-                    } as unknown as Parameters<typeof authClient.updateUser>[0])
+                    })
                     .then(() => setSaveState("saved"))
                     .catch(() => setSaveState("error"))
                     .finally(() => setIsSaving(false));

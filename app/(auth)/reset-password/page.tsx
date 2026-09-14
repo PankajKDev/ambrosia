@@ -1,4 +1,4 @@
-import ResetPassword from "@/components/shared/ResetPassword";
+import ResetPassword from "@/components/shared/auth/ResetPassword";
 
 type ResetPasswordPageProps = {
   searchParams: Promise<{

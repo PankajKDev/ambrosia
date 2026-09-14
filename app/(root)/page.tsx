@@ -1,23 +1,30 @@
-import { SignedIn } from "@/components/shared/auth/signed-in";
-import { SignedOut } from "@/components/shared/auth/signed-out";
-import Features from "@/components/shared/Features";
-import Hero from "@/components/shared/Hero";
-import HowItWorks from "@/components/shared/HowItWorks";
+import { auth } from "@/auth";
+import Features from "@/components/shared/Home/Features";
+import Hero from "@/components/shared/Home/Hero";
+import HowItWorks from "@/components/shared/Home/HowItWorks";
 import Onboarding from "@/components/shared/Onboarding";
 import Mood from "@/components/shared/Today/Mood";
+import { headers } from "next/headers";
 
-export default function Home() {
-  return (
-    <>
-      <SignedOut>
-        <Hero />
-        <HowItWorks />
-        <Features />
-      </SignedOut>
-      <SignedIn>
+export default async function Home() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (session?.user) {
+    return (
+      <>
         <Mood />
         <Onboarding />
-      </SignedIn>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <Hero />
+      <HowItWorks />
+      <Features />
     </>
   );
 }

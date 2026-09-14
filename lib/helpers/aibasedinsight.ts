@@ -1,4 +1,4 @@
-import { MODELS, SYSTEM_PROMPT } from "@/constants";
+import { MODELS, SYSTEM_PROMPT } from "@/constants/ai-providers";
 import { Note } from "../generated/prisma/client";
 import { z } from "zod";
 import { generateText, Output } from "ai";

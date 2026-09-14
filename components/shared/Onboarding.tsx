@@ -31,8 +31,7 @@ const focusAreas = [
 
 function Onboarding() {
   const { data: session, isPending } = authClient.useSession();
-  const isOnboarded = (session?.user as { isOnboarded?: boolean } | null)
-    ?.isOnboarded;
+  const isOnboarded = session?.user.isOnboarded;
 
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -61,7 +60,7 @@ function Onboarding() {
       await authClient.updateUser({
         focusAreas: Array.from(selected),
         isOnboarded: true,
-      } as unknown as Parameters<typeof authClient.updateUser>[0]);
+      });
     } catch {
       setSubmitError(
         "Something went wrong saving your preferences. Please try again.",
@@ -89,8 +88,8 @@ function Onboarding() {
               Welcome to Ambrosia.
             </h1>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              What would you like to better understand about your days? Pick
-              any that feel relevant — you can change this later.
+              What would you like to better understand about your days? Pick any
+              that feel relevant — you can change this later.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-2.5">
@@ -131,7 +130,10 @@ function Onboarding() {
             </div>
 
             {submitError && (
-              <p role="alert" className="mt-4 text-sm font-medium text-destructive">
+              <p
+                role="alert"
+                className="mt-4 text-sm font-medium text-destructive"
+              >
                 {submitError}
               </p>
             )}

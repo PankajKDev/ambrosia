@@ -52,8 +52,8 @@ export const auth = betterAuth({
         defaultValue: false,
         required: false,
       },
-      focusAreas: { type: "string[]", defaultValue: [] },
-      aiEnabled: { type: "boolean", defaultValue: false },
+      focusAreas: { type: "string[]", defaultValue: [], required: false },
+      aiEnabled: { type: "boolean", defaultValue: false, required: false },
     },
   },
   socialProviders: {

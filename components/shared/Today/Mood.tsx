@@ -15,14 +15,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-
-const levels = [
-  { value: "low", label: "Low", tone: "bg-(--mood-soft)" },
-  { value: "meh", label: "Meh", tone: "bg-(--mood-gold)/35" },
-  { value: "okay", label: "Okay", tone: "bg-(--mood-gold)/60" },
-  { value: "good", label: "Good", tone: "bg-(--mood-gold)" },
-  { value: "great", label: "Great", tone: "bg-(--mood-rose)" },
-];
+import { moodLevels } from "@/constants";
 
 const tagOptions = ["#win", "#heavy-day", "#proud", "#brain-fog", "#restful"];
 
@@ -154,7 +147,7 @@ function Mood({
           aria-label="Mood"
           className="mt-6 grid gap-2.5 sm:grid-cols-2"
         >
-          {levels.map((level, i) => {
+          {moodLevels.map((level, i) => {
             const active = mood === level.value;
             return (
               <button
@@ -168,8 +161,8 @@ function Mood({
                   e.preventDefault();
                   const next =
                     e.key === "ArrowDown"
-                      ? levels[Math.min(i + 1, levels.length - 1)]
-                      : levels[Math.max(i - 1, 0)];
+                      ? moodLevels[Math.min(i + 1, moodLevels.length - 1)]
+                      : moodLevels[Math.max(i - 1, 0)];
                   selectMood(next.value);
                 }}
                 className={cn(
@@ -249,11 +242,7 @@ function Mood({
         disabled={isSaving}
         className="mt-8 w-full"
       >
-        {isSaving ? (
-          <Loader2 className="size-4 animate-spin" />
-        ) : (
-          <PenLine />
-        )}
+        {isSaving ? <Loader2 className="size-4 animate-spin" /> : <PenLine />}
         {isSaving ? "Saving…" : "Create Note"}
       </Button>
 

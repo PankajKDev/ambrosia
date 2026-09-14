@@ -1,4 +1,4 @@
-import SignIn from "@/components/shared/SignIn";
+import SignIn from "@/components/shared/auth/SignIn";
 
 function page() {
   return <SignIn />;
