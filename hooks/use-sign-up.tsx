@@ -33,21 +33,10 @@ export function useSignUp() {
     await authClient.signIn.social({ provider: "google", callbackURL: "/" });
   };
 
-  const resendVerificationEmail = async (email: string) => {
-    const { error } = await authClient.sendVerificationEmail({
-      email,
-      callbackURL: "/",
-    });
-    if (error) {
-      setError(error.message || "error sending verification mail");
-    }
-  };
-
   return {
     signUpWithEmail,
     signUpWithGoogle,
     isLoading,
     error,
-    resendVerificationEmail,
   };
 }

@@ -23,9 +23,28 @@ export function useSignIn() {
     );
   };
 
+  const resendVerificationEmail = async (email: string): Promise<boolean> => {
+    setError(null);
+    const { error } = await authClient.sendVerificationEmail({
+      email,
+      callbackURL: "/",
+    });
+    if (error) {
+      setError(error.message || "error sending verification mail");
+      return false;
+    }
+    return true;
+  };
+
   const signInWithGoogle = async () => {
     setError(null);
     await authClient.signIn.social({ provider: "google", callbackURL: "/" });
   };
-  return { signInWithEmail, signInWithGoogle, isLoading, error };
+  return {
+    signInWithEmail,
+    signInWithGoogle,
+    isLoading,
+    error,
+    resendVerificationEmail,
+  };
 }

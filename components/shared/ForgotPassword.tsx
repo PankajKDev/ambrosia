@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,7 +38,8 @@ function ForgotPassword() {
       <div className="w-full max-w-md">
         <div className="mb-8 flex flex-col items-center text-center">
           <span className="grid size-12 place-items-center rounded-2xl bg-primary text-primary-foreground">
-            <Sparkles className="size-5" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.svg" alt="Ambrosia" className="size-5" />
           </span>
           <h1 className="mt-4 font-heading text-2xl font-semibold tracking-tight text-foreground">
             Reset your password

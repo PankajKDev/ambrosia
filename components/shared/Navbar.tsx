@@ -10,7 +10,6 @@ import {
   LogOut,
   NotebookPen,
   Settings,
-  Sparkles,
   TrendingUp,
   Zap,
 } from "lucide-react";
@@ -51,7 +50,8 @@ function Logo({ href }: { href: string }) {
   return (
     <Link href={href} className="flex items-center gap-2">
       <span className="grid size-8 place-items-center rounded-2xl bg-primary text-primary-foreground">
-        <Sparkles className="size-4" />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logo.svg" alt="Ambrosia" className="size-4" />
       </span>
       <span className="font-heading text-lg font-semibold tracking-tight">
         Ambrosia

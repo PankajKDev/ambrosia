@@ -120,11 +120,11 @@ export function computeConsistency(
     1,
     Math.ceil((periodEnd.getTime() - periodStart.getTime()) / 86_400_000),
   );
-  const daysLogged = new Set(notes.map((n) => n.date.toISOString().slice(0, 10))).size;
+  const daysLogged = new Set(
+    notes.map((n) => n.date.toISOString().slice(0, 10)),
+  ).size;
   return { daysLogged, totalDays, percentage: daysLogged / totalDays };
 }
-
-// ---- best/worst scored day ----
 
 export function findBestAndWorstDay(notes: Note[]) {
   const scored = notes.filter(

@@ -14,6 +14,9 @@ const nunitoSans = Nunito_Sans({ subsets: ["latin"], variable: "--font-sans" });
 export const metadata: Metadata = {
   title: "Ambrosia",
   description: "Journaling simplified for ADHD",
+  icons: {
+    icon: "/logo.svg",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

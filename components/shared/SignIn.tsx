@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 import GoogleButton from "@/components/shared/GoogleButton";
 import { Button } from "@/components/ui/button";
@@ -14,18 +14,30 @@ import { useSignIn } from "@/hooks/use-sign-in";
 
 function SignIn({ backTo }: { backTo?: string }) {
   const router = useRouter();
-  const { signInWithEmail, signInWithGoogle, isLoading, error } = useSignIn();
+  const {
+    signInWithEmail,
+    signInWithGoogle,
+    isLoading,
+    error,
+    resendVerificationEmail,
+  } = useSignIn();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [resent, setResent] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     await signInWithEmail(email, password);
   };
 
   const handleForgotPassword = () => {
     router.push(backTo ?? "/forgot-password");
+  };
+
+  const handleResend = async () => {
+    const sent = await resendVerificationEmail(email);
+    if (sent) setResent(true);
   };
 
   return (
@@ -38,7 +50,8 @@ function SignIn({ backTo }: { backTo?: string }) {
       <div className="w-full max-w-md">
         <div className="mb-8 flex flex-col items-center text-center">
           <span className="grid size-12 place-items-center rounded-2xl bg-primary text-primary-foreground">
-            <Sparkles className="size-5" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.svg" alt="Ambrosia" className="size-5" />
           </span>
           <h1 className="mt-4 font-heading text-2xl font-semibold tracking-tight text-foreground">
             Welcome back
@@ -90,9 +103,30 @@ function SignIn({ backTo }: { backTo?: string }) {
             </div>
 
             {error && (
-              <p role="alert" className="text-sm font-medium text-destructive">
-                {error}
-              </p>
+              <div className="space-y-3">
+                <p
+                  role="alert"
+                  className="text-sm font-medium text-destructive"
+                >
+                  {error}
+                </p>
+
+                {resent ? (
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Verification email sent
+                  </p>
+                ) : (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full"
+                    onClick={handleResend}
+                    disabled={isLoading || !email}
+                  >
+                    Resend verification email
+                  </Button>
+                )}
+              </div>
             )}
 
             <Button

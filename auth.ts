@@ -7,6 +7,7 @@ import resend from "./lib/resend";
 import ForgotPasswordTemplate from "./components/shared/Email/ForgotPasswordTemplate";
 import EmailVerificationTemplate from "./components/shared/Email/EmailVerificationTemplate";
 
+const authUrl = process.env.BETTER_AUTH_URL;
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
@@ -29,6 +30,8 @@ export const auth = betterAuth({
   },
   emailVerification: {
     sendOnSignUp: true,
+    sendOnSignIn: true,
+    autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
       const { error } = await resend.emails.send({
         from: "Ambrosia <onboarding@ambrosia.sainte.cloud>",
@@ -60,7 +63,7 @@ export const auth = betterAuth({
     },
   },
 
-  trustedOrigins: ["http://localhost:3000"],
+  trustedOrigins: [authUrl!],
   plugins: [
     oAuthProxy({
       productionURL: process.env.BETTER_AUTH_URL,
